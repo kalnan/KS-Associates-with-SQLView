@@ -1,0 +1,47 @@
+# Render Blueprint for KS Associates Company Database Management System.
+#
+# This deploys ONE web service (Node/Express) that serves both the JSON API
+# and the static frontend, plus a managed PostgreSQL database. That's the
+# simplest path and what backend/server.js is set up for.
+#
+# Push this repo to GitHub, then in the Render dashboard choose
+# "New +" -> "Blueprint" and point it at the repo. Render will read this
+# file and provision everything below automatically.
+#
+# If you'd rather host the frontend as its own Render Static Site, add a
+# second service with `type: web, runtime: static, rootDir: frontend`,
+# set its CORS_ORIGIN-facing counterpart on the backend, and set
+# `window.API_BASE` at the top of frontend/js/app.js to the backend's URL.
+
+databases:
+  - name: ks-associates-db
+    databaseName: ksassociates
+    user: ksassociates
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: ks-associates-backend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ks-associates-db
+          property: connectionString
+      - key: ADMIN_KEY
+        sync: false          # set this secret manually in the Render dashboard
+      - key: SQL_ACCESS_KEY
+        sync: false          # second secret, unlocks the raw-SQL console - set manually too
+      - key: JWT_SECRET
+        generateValue: true  # Render generates a strong random value
+      - key: CORS_ORIGIN
+        value: ""
+      - key: NODE_VERSION
+        value: 18.20.0
