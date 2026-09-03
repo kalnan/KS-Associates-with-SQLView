@@ -197,6 +197,18 @@ input:focus-visible {
 
 .topbar-actions { display: flex; align-items: center; gap: 14px; }
 
+/* .btn-ghost defaults to dark text (var(--ink)) for use on light
+   backgrounds elsewhere in the app. The top bar's own background is that
+   same dark ink color, so ghost buttons inside it need light text instead
+   or they're invisible until hovered. */
+.topbar-actions .btn-ghost {
+  color: var(--parchment);
+  border-color: rgba(247, 245, 240, 0.35);
+}
+.topbar-actions .btn-ghost:hover {
+  background: rgba(247, 245, 240, 0.12);
+}
+
 .badge {
   font-size: 12px;
   background: rgba(217, 190, 143, 0.15);
